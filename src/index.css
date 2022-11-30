@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/** 1rem = 16px **/
+
+:root {
+  --color-primary: #1677ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+p {
+  word-break: break-all;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}

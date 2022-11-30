@@ -1,0 +1,11 @@
+.icon-font {
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 3px;
+  padding: 4px;
+  transition: background-color 0.26s;
+
+  &:hover {
+    background-color: #eff0f0;
+  }
+}
