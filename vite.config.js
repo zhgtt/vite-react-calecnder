@@ -15,9 +15,9 @@ export default defineConfig({
   server: {
     port: 3018
   },
-  build: {
-    rollupOptions: {
-      external: /{{.*/
-    }
-  }
+  // build: {
+  //   rollupOptions: {
+  //     external: ["react"]
+  //   }
+  // }
 });

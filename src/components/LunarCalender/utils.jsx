@@ -1,4 +1,4 @@
-import { solar2lunar } from "solarLunar"; // 农历 / 公历 互转
+import { solar2lunar } from "solarlunar"; // 农历 / 公历 互转
 import clsx from "clsx";
 import { SOLAR_HOLIDAY, LUNAR_HOLIDAY, REST_DAY } from "../../utils/constants";
 
