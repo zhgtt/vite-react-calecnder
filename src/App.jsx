@@ -5,10 +5,8 @@ import LunarCalender from "./components/LunarCalender";
 export default function App() {
   return (
     <div style={{ padding: 18 }}>
-      {/* 评论组件 */}
-      {/* <Card style={{ width: "70%", margin: "0 auto" }}> */}
+      {/* 日历组件 */}
       <LunarCalender />
-      {/* </Card> */}
     </div>
   );
 }

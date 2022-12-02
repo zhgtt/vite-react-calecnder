@@ -4,8 +4,8 @@
   border-radius: 3px;
   padding: 4px;
   transition: background-color 0.26s;
+}
 
-  &:hover {
-    background-color: #eff0f0;
-  }
+.icon-font:hover {
+  background-color: #eff0f0;
 }

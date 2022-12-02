@@ -5,10 +5,16 @@ module.exports = {
     extend: {
       colors: {
         primary: "var(--color-primary)"
+      },
+      fontFamily: {
+        primary: ["BadComic"]
       }
     }
   },
   plugins: [],
-  darkMode: "class"
+  darkMode: "class",
+  corePlugins: {
+    preflight: false
+  }
   // prefix: "tw-"
 };

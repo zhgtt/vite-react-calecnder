@@ -1,127 +1,177 @@
-import React, { useState, useCallback, useMemo } from "react";
-import { Calendar, Space, Card, Row, Col } from "antd";
-import { createFromIconfontCN } from "@ant-design/icons";
-import { solar2lunar, lunar2solar } from "solarLunar"; // 农历 / 公历 互转
+import React, { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react";
+import { Calendar, Space, Card, Row, Col, Button, Tooltip } from "antd";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { css } from "@emotion/react";
 import clsx from "clsx";
-import { SOLAR_HOLIDAY, LUNAR_HOLIDAY, EN_MONTH } from "../../utils/constants";
+import { MONTH_VERSE } from "../../utils/constants";
+import { getLunarDate, getDayRender } from "./utils";
+import hesuan from "./../../assets/images/hesuan.svg";
 
-/** 重点 solarLunar 部分方法
- * @solar 公历、阳历
- * @lunar 农历、阴历
- *
- * 方法
- * @solar2lunar 公历 -> 农历，会返回相应的节气，属年等信息
- * @lunar2solar 农历 -> 公历
- *
- * 返回数据
- * @dayCn 农历日期
- * @monthCn 农历月份
- * @term 节气
- * @isLeap 是否为闰月
- */
+// 所有的 date 参数都是 dayjs() 格式
+console.log("dayjs 😄, ", dayjs().format("MMM"));
 
-const IconFont = createFromIconfontCN({
-  scriptUrl: "//at.alicdn.com/t/c/font_3492952_vlbtof57zac.js"
-});
-
-// 重点 获取每天的农历日期、农历节日、公历节日
-const getLunarDate = (date) => {
-  const year = dayjs(date).year(); // 年份
-  const month = dayjs(date).month() + 1; // 月份
-  const day = dayjs(date).date(); // 日期
-  const formatDate = dayjs(date).format("MM-DD");
-
-  // 公历 -> 农历
-  const lunarDate = solar2lunar(year, month, day);
-
-  // 获取公历日期
-  const enMonth = EN_MONTH[month - 1];
-  const { name: solarHoliday } = SOLAR_HOLIDAY[enMonth].find((item) => item.date === formatDate) || {};
-
-  // 获取农历日期
-  const { name: lunarHoliday } =
-    LUNAR_HOLIDAY.find((item) => item.date === `${lunarDate.monthCn}${lunarDate.dayCn}`) || {};
-
-  return { ...lunarDate, solarHoliday, lunarHoliday };
-};
-
-/** 重点 显示日期 Render，顺序为 农历节日 > 公历节日 > 节气 > 农历月份 > 农历日期
- * 1. 农历月份的样式上会有下划线，字体颜色不会变
- * 2. 如果是初一，显示为当前农历月份
- */
-const getDayRender = (date) => {
-  const { dayCn, term, monthCn, solarHoliday, lunarHoliday } = getLunarDate(date);
-
-  // 判断是否有节日或节气
-  const isHasHoliday = [lunarHoliday, solarHoliday, term].filter(Boolean).length;
-  // 判断是否为初一
-  const isJuniorOne = dayCn === "初一";
-
-  const render = () => {
-    if (isHasHoliday) return <span className="text-primary">{lunarHoliday || solarHoliday || term}</span>;
-    if (isJuniorOne) return <span>{monthCn}</span>;
-    return <span>{dayCn}</span>;
-  };
-
-  return (
-    <>
-      <div className="text-xs scale-[0.84] -mt-1.5">{render()}</div>
-      {isJuniorOne && <span className="w-4 h-px bg-primary block" />}
-    </>
-  );
-};
+// 快速创建一个序列数组
+const Dot = [...new Array(12).keys()];
 
 /**
- * @components
+ * 组件 @components
  */
 export default function LunarCalender(props) {
-  const [value, setValue] = useState(dayjs()); // 选中的日期
+  const calendarRef = useRef(null);
 
+  const [curPanelDate, setCurPanelDate] = useState(dayjs()); // 当前面板日期
+  const [curDate, setCurDate] = useState(dayjs()); // 选中的日期
+
+  // 重点 处理日历面板的的最后一行是否显示
+  useEffect(() => {
+    if (!calendarRef && !curPanelDate) return;
+    const dom = calendarRef.current;
+    const trLast = dom.querySelector(".ant-picker-content>tbody>tr:last-child"); // 获取日历的最后一组 tr
+    const tdList = Array.from(trLast.children); // 转换成真正的数组
+
+    // 判断 tdList 中第一个 td 的日期是否为当前月，非当前月，将 tr 隐藏（需异步操作）
+    setTimeout(() => {
+      const title = tdList[0].title;
+      const isCurMonth = dayjs(title).format("MM") === curPanelDate.format("MM");
+
+      trLast.style.display = isCurMonth ? "contents" : "none";
+    }, 0);
+  }, [calendarRef, curPanelDate]);
+
+  // Method 自定义渲染日期单元格（只渲染当前月的日期）
   const dateFullCellRender = (date) => {
-    const day = dayjs(date).date(); // 日期
+    const day = date.date();
 
-    const isCheck = dayjs(value).isSame(date, "date");
+    const isCheck = curDate.isSame(date, "date");
     const isToday = dayjs().isSame(date, "date"); // 判断是否为当天
+    const isCurMonth = date.format("MM") === curDate.format("MM"); // 判断是否为当前月
 
+    // 只展示当前月的日期
     return (
       <div
         className={clsx(
-          "w-[40px] h-[40px] my-1.5 mx-auto flex flex-col items-center rounded-md border-transparent border border-solid transition-all",
-          // isToday && !isCheck && ["text-primary"],
+          "relative w-[40px] h-[40px] my-1.5 mx-auto flex flex-col items-center rounded-md border-transparent border border-solid transition-all",
+          isCurMonth && isToday && !isCheck && ["text-primary"],
           isToday && isCheck && ["bg-primary", "text-white"],
-          // isCheck && ["!border-primary"]
+          isCheck && ["!border-primary"]
         )}
       >
         <div className="text-base">{day}</div>
-        {getDayRender(date)}
+        {getDayRender(date, { isCurMonth, isCheck, isToday })}
       </div>
     );
   };
-  // [value]
-  // []
-  // );
 
-  // const onSelect = (date) => {
-  //   setValue(date);
-  // };
+  // Method 自定义渲染头部
+  const headerRender = ({ value, type, onChange, onTypeChange }) => {
+    const year = `${curDate.year()}`;
+    const month = `${curDate.format("MM")}`;
+
+    return (
+      <div className="flex justify-between items-center mb-6">
+        <div className="font-primary">
+          <span className="text-4xl">{year}.</span>
+          <span className="text-2xl">{month}</span>
+        </div>
+        <Space>
+          <Tooltip title="回到今天 🥳">
+            <Button onClick={() => onChange(dayjs())}>今</Button>
+          </Tooltip>
+          <Button
+            type="primary"
+            icon={<LeftOutlined />}
+            onClick={() => {
+              const prevMonthPanel = value.subtract(1, "month");
+              // const m = curDate.month();
+              // const prevMonth = value.clone().month(m - 1);
+              onChange(prevMonthPanel); // 通过该事件来控制 📅 面板
+            }}
+          />
+          <Button
+            type="primary"
+            icon={<RightOutlined />}
+            onClick={() => {
+              const nextMonthPanel = value.add(1, "month");
+              onChange(nextMonthPanel);
+            }}
+          />
+        </Space>
+      </div>
+    );
+  };
+
+  const onSelect = (date) => {
+    //   setCurDate(date);
+  };
+
+  const onChange = (date) => {
+    //   console.log("date: ", date.format("YYYY-MM-DD"));
+    setCurDate(date);
+  };
+
+  const onPanelChange = (date, mode) => {
+    setCurDate(date);
+    setCurPanelDate(date);
+  };
 
   return (
-    <Card>
+    <Card
+      title={
+        <div className="flex justify-between">
+          {Dot.map((item) => (
+            <span key={item} className="block w-6 h-6 rounded-full bg-gray-100" />
+          ))}
+        </div>
+      }
+      bodyStyle={{ paddingTop: 56 }}
+      style={{ width: "90%", margin: "0 auto" }}
+    >
       <Row>
-        <Col span={12}>
-          <div>日期</div>
-          <Calendar
-            //   style={{ width: "50%" }}
-            //   value={value}
-            // validRange={[dayjs("2022-11-01"), dayjs("2022-11-30")]} // 设置可以显示的日期，它是个由两个值组成的区间
-            fullscreen={false}
-            dateFullCellRender={dateFullCellRender} // 自定义渲染日期单元格，返回内容会覆盖原单元格
-            // onSelect={onSelect}
-          />
+        <Col span={10}>
+          <div ref={calendarRef} className="text-center">
+            <Calendar
+              //   value={curDate}
+              headerRender={headerRender} // 自定义头部
+              // validRange={[curDate.startOf("month"), curDate.endOf("month")]} // 设置可以显示、选择的日期，它是个由两个值组成的区间
+              fullscreen={false}
+              dateFullCellRender={dateFullCellRender} // 自定义渲染日期单元格，返回内容会覆盖原单元格
+              onSelect={onSelect} // 日期选中回调
+              onChange={onChange} // 日期变化回调
+              onPanelChange={onPanelChange} // 面板变化回调，搭配 headerRender 使用
+              css={css`
+                .ant-picker-panel .ant-picker-body {
+                  padding-top: 1.5rem;
+
+                  .ant-picker-content {
+                    &::before {
+                      content: "${curDate.format("M")}";
+                      position: absolute;
+                      font-size: 12rem;
+                      opacity: 0.08;
+                      color: var(--color-primary);
+                      font-family: BadComic;
+                      line-height: 1;
+                      left: 50%;
+                      top: 50%;
+                      transform: translate(-50%, -40%);
+                    }
+
+                    > tbody > tr:first-of-type td {
+                      padding-top: 18px;
+                    }
+                  }
+                }
+              `}
+            />
+            <aside className="mt-12">
+              <p className="text-primary tracking-[0.8rem] text-xs">{MONTH_VERSE[curDate.format("MMM")]}</p>
+            </aside>
+          </div>
         </Col>
-        <Col span={12}>插画</Col>
+        <Col span={14} className="flex justify-center items-center">
+          <img src={hesuan} width={"60%"} />
+        </Col>
       </Row>
     </Card>
   );

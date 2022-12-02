@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 /** 1rem = 16px **/
+@font-face {
+  font-family: BadComic;
+  src: url("./assets/fonts/BadComic-Regular.ttf");
+}
 
 :root {
   --color-primary: #1677ff;
@@ -14,10 +18,16 @@
 
 p {
   word-break: break-all;
+  margin: 0;
 }
 
 ul {
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+/* antd 默认样式 */
+.ant-picker-cell.ant-picker-cell-disabled::before {
+  background-color: transparent;
 }

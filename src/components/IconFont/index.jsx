@@ -1,7 +1,7 @@
 import React from "react";
 import { Tooltip } from "antd";
 import { createFromIconfontCN } from "@ant-design/icons";
-import "./styles.scss";
+import "./styles.css";
 
 export default function IconFont(props) {
   const { type, style, tip, onClick } = props;
