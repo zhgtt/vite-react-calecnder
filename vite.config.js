@@ -14,7 +14,7 @@ export default defineConfig({
   // 配置前端服务器
   server: {
     port: 3018
-  },
+  }
   // build: {
   //   rollupOptions: {
   //     external: ["solarLunar"]
