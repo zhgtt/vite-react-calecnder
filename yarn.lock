@@ -1812,10 +1812,10 @@ shallowequal@^1.1.0:
   resolved "https://registry.npmmirror.com/shallowequal/-/shallowequal-1.1.0.tgz#188d521de95b9087404fd4dcb68b13df0ae4e7f8"
   integrity sha512-y0m1JoUZSlPAjXVtPPW70aZWfIL/dSP7AFkRnniLCrK/8MDKog3TySTBmckD+RObVxH0v4Tox67+F14PdED2oQ==
 
-solarlunar@^2.0.7:
-  version "2.0.7"
-  resolved "https://registry.npmmirror.com/solarlunar/-/solarlunar-2.0.7.tgz#b323e156028fa5ffcb44d28b64ef7a2e390ccff9"
-  integrity sha512-2SfuCCgAAxFU5MTMYuKGbRgRLcPTJQf3azMEw/GmBpHXA7N2eAQJStSqktZJjnq4qRCboBPnqEB866+PCregag==
+solarlunar-es@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.npmmirror.com/solarlunar-es/-/solarlunar-es-1.0.9.tgz#fdd29efbf28afa0f649f19732c9ed01a2dd3c7b7"
+  integrity sha512-Phsk53NMRexjZkXmL6Q9l1UOtJ0GPt+/KUu+mCZkGIV9GlXpYxwjjh4hGhSd7j7k/PrVtX5Uh7/iW5R7fJ+STg==
 
 source-map-js@^1.0.2:
   version "1.0.2"
