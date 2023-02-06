@@ -51,7 +51,7 @@ export default function MonthCalendar(props) {
               "text-xs",
               isRestDay && ["text-primary"],
               isWeekDay && ["text-red-500"],
-              isCheck && ["text-white"]
+              isCheck && ["!text-white"]
             )}
           >
             {day}
@@ -63,33 +63,36 @@ export default function MonthCalendar(props) {
     [curYear]
   );
 
-  const onChange = (date) => {
+  const onSelect = (date) => {
+    // console.log("date: ", date);
     onTypeChange && onTypeChange(date);
   };
 
   return (
     <>
       {/* 标题 */}
-      <Space size={36} align="end">
-        <span className="text-5xl font-primary">{curYear || "--"}</span>
+      <div className="flex justify-between items-end">
+        <Space size={32} align="end">
+          <span className="text-5xl font-primary">{curYear || "--"}</span>
+          <Space size={20} className="text-xs mb-1">
+            <span className="flex items-center">
+              <span className="block w-3 h-px bg-primary mr-1" />
+              农历初一
+            </span>
+            <span className="text-primary">休</span>
+            <span className="text-red-500">班</span>
+          </Space>
+        </Space>
+
         <Space className="mb-[0.2rem]">
           <Select options={YearsList} value={curYear} onChange={(value) => setCurYear(value)} />
-          <Button
-            type="primary"
-            icon={<LeftOutlined />}
-            onClick={() => {
-              setCurYear(curYear - 1);
-            }}
-          />
-          <Button
-            type="primary"
-            icon={<RightOutlined />}
-            onClick={() => {
-              setCurYear(curYear + 1);
-            }}
-          />
+          <Tooltip title="回到今天 🥳">
+            <Button onClick={() => onSelect(dayjs())}>今</Button>
+          </Tooltip>
+          <Button type="primary" icon={<LeftOutlined />} onClick={() => setCurYear(curYear - 1)} />
+          <Button type="primary" icon={<RightOutlined />} onClick={() => setCurYear(curYear + 1)} />
         </Space>
-      </Space>
+      </div>
 
       <Divider className="mb-8" />
 
@@ -115,7 +118,7 @@ export default function MonthCalendar(props) {
                   )}
                   dateFullCellRender={(date) => dateFullCellRender(date, item)}
                   validRange={[startDate, endDate]}
-                  onChange={onChange}
+                  onSelect={onSelect}
                   css={css`
                     .ant-picker-panel {
                       border-top: none;

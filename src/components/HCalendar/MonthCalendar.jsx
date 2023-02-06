@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react";
-import { Calendar, Space, Row, Col, Button, Tooltip, Segmented } from "antd";
+import { Calendar, Space, Button, Tooltip } from "antd";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { css } from "@emotion/react";
 import dayjs from "dayjs";
 import clsx from "clsx";
-import Timer from "@/components/Timer";
 import { MONTH_VERSE } from "@/utils/constants";
 import { getLunarDate } from "./utils";
-import hesuan from "@/assets/images/hesuan.svg";
-import zuohesuan from "@/assets/images/zuohesuan.svg";
 
 /** Method 显示日期 Render，顺序为 农历节日 > 公历节日 > 节气 > 农历月份 > 农历日期
  * 1. 农历月份的样式上会有下划线，字体颜色不会变
@@ -30,7 +27,13 @@ export const getDayRender = (date, options = {}) => {
   const render = () => {
     if (isHasHoliday)
       return (
-        <span className={clsx("text-primary truncate block max-w-[36px]", disabledStyle)}>
+        <span
+          className={clsx(
+            "text-primary truncate block max-w-[36px]",
+            disabledStyle,
+            isToday && isCheck && ["text-white"]
+          )}
+        >
           {lunarHoliday || solarHoliday || term}
         </span>
       );
@@ -59,7 +62,7 @@ export const getDayRender = (date, options = {}) => {
 };
 
 export default function MonthCalendar(props) {
-  const { onTypeChange, defaultDate } = props;
+  const { onTypeChange, defaultDate, onDateChange } = props;
 
   const calendarRef = useRef(null);
 
@@ -102,10 +105,11 @@ export default function MonthCalendar(props) {
       return (
         <div
           className={clsx(
-            "relative w-[40px] h-[40px] my-1.5 mx-auto flex flex-col items-center rounded-md border-transparent border border-solid transition-all hover:border-primary",
+            "relative w-[40px] h-[40px] my-1.5 mx-auto flex flex-col items-center rounded-md border-transparent border border-solid transition-all hover:border-primary-opacity",
             isCurMonth && isToday && !isCheck && ["text-primary"],
             isToday && isCheck && ["bg-primary", "text-white"],
             isCheck && ["!border-primary"]
+            // !isCurMonth && ["hover:border-gray-100"]
           )}
         >
           <div className="text-base">{day}</div>
@@ -168,6 +172,7 @@ export default function MonthCalendar(props) {
 
   const onChange = (date) => {
     setCurDate(date);
+    onDateChange && onDateChange(date);
   };
 
   const onPanelChange = (date, mode) => {
@@ -176,58 +181,48 @@ export default function MonthCalendar(props) {
   };
 
   return (
-    <Row>
-      <Col span={10}>
-        <div ref={calendarRef} className="text-center">
-          <Calendar
-            value={curDate}
-            headerRender={headerRender} // 自定义头部
-            fullscreen={false}
-            dateFullCellRender={dateFullCellRender} // 自定义渲染日期单元格，返回内容会覆盖原单元格
-            onSelect={onSelect} // 日期选中回调
-            onChange={onChange} // 日期变化回调
-            onPanelChange={onPanelChange} // 面板变化回调，搭配 headerRender 使用
-            css={css`
-              .ant-picker-panel .ant-picker-body {
-                padding-top: 1.5rem;
+    <div ref={calendarRef} className="text-center">
+      <Calendar
+        value={curDate}
+        headerRender={headerRender} // 自定义头部
+        fullscreen={false}
+        dateFullCellRender={dateFullCellRender} // 自定义渲染日期单元格，返回内容会覆盖原单元格
+        onSelect={onSelect} // 日期选中回调
+        onChange={onChange} // 日期变化回调
+        onPanelChange={onPanelChange} // 面板变化回调，搭配 headerRender 使用
+        className="bg-transparent"
+        css={css`
+          .ant-picker-panel {
+            background: transparent;
+          }
+          .ant-picker-panel .ant-picker-body {
+            padding-top: 1.5rem;
 
-                .ant-picker-content {
-                  &::before {
-                    content: "${curDate.format("M")}";
-                    position: absolute;
-                    font-size: 12rem;
-                    opacity: 0.08;
-                    color: var(--color-primary);
-                    font-family: BadComic;
-                    line-height: 1;
-                    left: 50%;
-                    top: 50%;
-                    transform: translate(-50%, -40%);
-                  }
-
-                  > tbody > tr:first-of-type td {
-                    padding-top: 18px;
-                  }
-                }
+            .ant-picker-content {
+              position: relative;
+              &::before {
+                content: "${curDate.format("M")}";
+                position: absolute;
+                font-size: 12rem;
+                opacity: 0.08;
+                color: var(--color-primary);
+                font-family: BadComic;
+                line-height: 1;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -40%);
               }
-            `}
-          />
-          <aside className="mt-12">
-            <p className="text-primary tracking-[0.8rem] text-xs">{MONTH_VERSE[curDate.format("MMM")]}</p>
-          </aside>
-        </div>
-      </Col>
-      <Col span={14} className="flex flex-col items-center">
-        <Segmented
-          className="self-end"
-          options={[
-            { label: "插画", value: "Illustration" },
-            { label: "日程", value: "Schedule" }
-          ]}
-        />
-        <img src={zuohesuan} width={"60%"} />
-        <Timer className="mt-12 self-end" />
-      </Col>
-    </Row>
+
+              > tbody > tr:first-of-type td {
+                padding-top: 18px;
+              }
+            }
+          }
+        `}
+      />
+      <aside className="mt-12">
+        <p className="text-primary tracking-[0.8rem] text-xs">{MONTH_VERSE[curDate.format("MMM")]}</p>
+      </aside>
+    </div>
   );
 }

@@ -36,9 +36,6 @@ export const SOLAR_HOLIDAY = {
   ]
 };
 
-//   { date: "05-14", name: "母亲节" },
-//   { date: "06-18", name: "父亲节" },
-
 // 农历节日
 export const LUNAR_HOLIDAY = [
   { date: "正月初一", name: "春节" },
@@ -49,6 +46,7 @@ export const LUNAR_HOLIDAY = [
   { date: "八月十五", name: "中秋节" },
   { date: "九月初九", name: "重阳节" },
   { date: "腊月初八", name: "腊八节" },
+  { date: "腊月廿三", name: "北方小年" },
   { date: "腊月三十", name: "除夕" }
 ];
 
@@ -82,14 +80,12 @@ export const REST_DAY = {
       "01-25",
       "01-26",
       "01-27",
-      "04-03",
-      "04-04",
       "04-05",
+      "04-29",
       "04-30",
       "05-01",
       "05-02",
       "05-03",
-      "05-04",
       "06-22",
       "06-23",
       "06-24",
@@ -99,8 +95,25 @@ export const REST_DAY = {
       "10-02",
       "10-03",
       "10-04",
-      "10-05"
+      "10-05",
+      "10-06"
     ],
-    weekday: []
+    weekday: ["01-28", "01-29", "04-23", "05-06", "06-25", "10-07", "10-08"]
   }
 };
+
+// 生肖图标
+export const ANIMALS_ICON = [
+  { name: "鼠", icon: "icon-dino-laoshu" },
+  { name: "牛", icon: "icon-dino-niu" },
+  { name: "虎", icon: "icon-dino-laohu" },
+  { name: "兔", icon: "icon-dino-tuzi" },
+  { name: "龙", icon: "icon-dino-long" },
+  { name: "蛇", icon: "icon-dino-she" },
+  { name: "马", icon: "icon-dino-ma" },
+  { name: "羊", icon: "icon-dino-yang" },
+  { name: "猴", icon: "icon-dino-houzi" },
+  { name: "鸡", icon: "icon-dino-ji" },
+  { name: "狗", icon: "icon-dino-gou" },
+  { name: "猪", icon: "icon-dino-zhu" }
+];

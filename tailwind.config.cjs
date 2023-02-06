@@ -4,7 +4,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "var(--color-primary)"
+        primary: "var(--color-primary)",
+        "primary-opacity": "rgba(var(--color-primary-rgb), 0.45)"
       },
       fontFamily: {
         primary: ["BadComic"]

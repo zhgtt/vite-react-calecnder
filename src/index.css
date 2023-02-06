@@ -10,6 +10,7 @@
 
 :root {
   --color-primary: #1677ff;
+  --color-primary-rgb: 22, 119, 255;
 }
 
 * {

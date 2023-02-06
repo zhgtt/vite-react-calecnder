@@ -6,7 +6,7 @@ export default function IconFont(props) {
   const { className, type, style, tip, onClick } = props;
 
   const Icon = createFromIconfontCN({
-    scriptUrl: ["//at.alicdn.com/t/c/font_2788953_t2xp9148lks.js"]
+    scriptUrl: ["//at.alicdn.com/t/c/font_2788953_3mpi8j7u5zk.js"]
   });
 
   const IconRender = <Icon className={className} style={style} type={type} onClick={onClick} />;
